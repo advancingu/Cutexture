@@ -1,0 +1,51 @@
+/** This file is part of Cutexture.
+ 
+ Copyright (c) 2010 Markus Weiland, Kevin Lang
+
+ Portions of this code may be under copyright of authors listed in AUTHORS.
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ */
+
+#pragma once
+
+#include "Prerequisites.h"
+#include <OgreCommon.h>
+#include <QtCore/QString>
+
+namespace Cutexture
+{
+	/** Centrally defines application-wide constants to reduce 
+	 * cross-referencing between components. */
+	namespace Constants
+	{
+		/** Name for accessing the user interface overlay texture 
+		 * in Ogre. */
+		static const Ogre::String UI_TEXTURE_NAME = "UiTexture";
+		
+		static const Ogre::String SCENE_MANAGER_NAME = "SceneManager";
+		
+		static const QString SETTINGS_FILENAME = "CutextureSettings.ini";
+		
+		static const int INPUT_MANAGER_MOUSE_OFFSET_X = 6;
+		static const int INPUT_MANAGER_MOUSE_OFFSET_Y = 6;
+		
+		static const Ogre::Real MOVEMENT_RATE_PER_SECOND = 10.0; // 10 meters per second.
+	}
+}
