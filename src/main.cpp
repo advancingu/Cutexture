@@ -33,22 +33,18 @@
 
 int main(int argc, char *argv[])
 {
-	Cutexture::Core* core = NULL;
+	QScopedPointer<Cutexture::Core> corePtr;
 	
 	try
 	{
 		QApplication app(argc, argv);
 		
-		
 		//Run the game
-		core = new Cutexture::Core();
+		corePtr.reset(new Cutexture::Core());
 		// blocking call; we advance Qt's event loop in this method; no need to call app.exec()
-		core->go();
+		corePtr->go();
 		
 		Ogre::LogManager::getSingleton().logMessage("Cutexture finished running, exiting...");
-		
-		delete core;
-		core = NULL;
 		
 		return 0;
 	}
@@ -59,12 +55,6 @@ int main(int argc, char *argv[])
 				+ "\": " + e.getDescription();
 		Ogre::LogManager::getSingleton().logMessage("Error: " + fullDesc);
 		
-		if (core)
-		{
-			delete core;
-			core = NULL;
-		}
-		
 		return 1;
 	}
 	catch (Cutexture::Exception &e)
@@ -72,12 +62,7 @@ int main(int argc, char *argv[])
 		//Game engine error
 		Ogre::LogManager::getSingleton().logMessage("Error: " + e.getFullDescription());
 		
-		if (core)
-		{
-			delete core;
-			core = NULL;
-		}
-		
 		return 1;
 	}
 }
+
