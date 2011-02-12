@@ -153,7 +153,8 @@ endif(CMAKE_BUILD_TYPE MATCHES "Release")
 # Configure sources												     #
 ######################################################################
 
-file(GLOB CUTEXTURE_SOURCES "src/*.cpp")
+#file(GLOB CUTEXTURE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+AUX_SOURCE_DIRECTORY("${CMAKE_CURRENT_SOURCE_DIR}/src" CUTEXTURE_SOURCES)
 
 set(CUTEXTURE_MOC_HEADERS
     ${CUTEXTURE_INCLUDE_DIR}/UiManager.h
