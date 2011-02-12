@@ -39,14 +39,9 @@ namespace Cutexture
 {
 	
 	UiManager::UiManager() :
-		mWidgetBuffer(NULL), mWidgetScene(NULL), mWidgetView(NULL), mTopLevelWidget(NULL),
+		mWidgetScene(NULL), mWidgetView(NULL), mTopLevelWidget(NULL),
 				mFocusedWidget(NULL)
 	{
-		mWidgetBuffer = new QImage(QSize(512, 512), QImage::Format_ARGB32);
-		
-		connect(this, SIGNAL(uiRepaintRequired()), this, SLOT(updateUiTexture()),
-				Qt::QueuedConnection);
-		
 		mWidgetScene = new QGraphicsScene(this);
 		mWidgetView = new QGraphicsView(mWidgetScene);
 		mWidgetView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -73,7 +68,6 @@ namespace Cutexture
 
 	UiManager::~UiManager()
 	{
-		delete mWidgetBuffer;
 	}
 	
 	void UiManager::setupUserInterfaceWidgets()
@@ -122,9 +116,6 @@ namespace Cutexture
 			txtrUstate->setTextureScale(txtrUScale, txtrVScale);
 			txtrUstate->setTextureScroll((1 / txtrUScale) / 2 - 0.5, (1 / txtrVScale) / 2 - 0.5);
 		}
-	
-		delete mWidgetBuffer;
-		mWidgetBuffer = new QImage(QSize(newTexWidth, newTexHeight), QImage::Format_ARGB32);
 	}
 	
 	void UiManager::mousePressEvent(QMouseEvent *event)
@@ -210,18 +201,24 @@ namespace Cutexture
 	
 	void UiManager::updateUiTexture()
 	{
-		// clear the previous buffer
-		mWidgetBuffer->fill(0);
-	
 		// update the Ogre texture
 		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingletonPtr()->getByName(Constants::UI_TEXTURE_NAME);
+		
 		if (!txtr.isNull())
 		{
-			// render into buffer
-			QPainter painter(mWidgetBuffer);
+			Ogre::HardwarePixelBufferSharedPtr hwBuffer = txtr->getBuffer(0, 0);
+			hwBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
+			
+			const Ogre::PixelBox &pb = hwBuffer->getCurrentLock();
+			
+			// render into texture buffer
+			QImage textureImg((uchar *)pb.data, pb.getWidth(), pb.getHeight(), QImage::Format_ARGB32);
+			textureImg.fill(0);
+			
+			QPainter painter(&textureImg);
 			mWidgetView->render(&painter, QRect(QPoint(0, 0), mWidgetView->size()), QRect(QPoint(0, 0), mWidgetView->size()));
-	
-			OgreCore::getSingletonPtr()->copyToTexture(mWidgetBuffer, txtr);
+			
+			hwBuffer->unlock();
 		}
 	}
 }

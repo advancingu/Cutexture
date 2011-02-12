@@ -92,10 +92,6 @@ namespace Cutexture
 
 		Ogre::RenderWindow* const getOgreRenderWindow() const;
 
-		/** Copies the data of a QImage instance into an Ogre::Image instance.
-		 * Caller is responsible for managing the image pointer. */
-		void copyToTexture(QImage *qtImage, const Ogre::TexturePtr &ogreTexture) const;
-
 		/** Checks if the Ogre render window was resized and notifies the 
 		 * UiManager if needed. */
 		void processWindowEvents();

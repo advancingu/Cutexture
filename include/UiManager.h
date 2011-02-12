@@ -62,10 +62,6 @@ namespace Cutexture
 
 	private:
 		
-		
-		/** Offscreen buffer for rendering Qt widgets into. */
-		QImage *mWidgetBuffer;
-
 		/** Scene which contains all the user interface widgets
 		 * as QGraphicsWidget items. */
 		QGraphicsScene *mWidgetScene;

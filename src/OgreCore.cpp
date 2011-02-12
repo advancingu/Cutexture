@@ -137,18 +137,6 @@ namespace Cutexture
 		return mOgreRenderWindow;
 	}
 	
-	void OgreCore::copyToTexture(QImage *qtImage, const Ogre::TexturePtr &ogreTexture) const
-	{
-		Ogre::HardwarePixelBufferSharedPtr hwBuffer = ogreTexture->getBuffer(0, 0);
-		hwBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
-		
-		const Ogre::PixelBox &pb = hwBuffer->getCurrentLock();
-		Ogre::uint32 *data = static_cast<Ogre::uint32*> (pb.data);
-		memcpy(data, qtImage->bits(), qtImage->numBytes());
-		
-		hwBuffer->unlock();
-	}
-	
 	void OgreCore::processWindowEvents()
 	{
 		unsigned int currWidth = 0;
