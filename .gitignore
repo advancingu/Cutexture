@@ -1,0 +1,8 @@
+.cproject
+.project
+CMakeCache.txt
+CMakeFiles
+Makefile
+include/moc_*
+cmake_install.cmake
+CUTEXTURE
