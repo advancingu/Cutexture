@@ -109,6 +109,14 @@ namespace Cutexture
 			}
 
 			mGame->update();
+			
+			UiManager *uiMan = UiManager::getSingletonPtr();
+			if (uiMan->isUiDirty())
+			{
+				uiMan->updateUiTexture();
+				uiMan->setUiDirty(false);
+			}
+			
 			mOgreCore->renderFrame();
 			
 			

@@ -40,7 +40,7 @@ namespace Cutexture
 	
 	UiManager::UiManager() :
 		mWidgetScene(NULL), mWidgetView(NULL), mTopLevelWidget(NULL),
-				mFocusedWidget(NULL)
+				mFocusedWidget(NULL), mUiDirty(false)
 	{
 		mWidgetScene = new QGraphicsScene(this);
 		mWidgetView = new QGraphicsView(mWidgetScene);
@@ -56,7 +56,7 @@ namespace Cutexture
 		QEvent wsce(QEvent::WindowActivate);
 		QApplication::sendEvent(mWidgetScene, &wsce);
 		
-		connect(mWidgetScene, SIGNAL(changed(const QList<QRectF> &)), this, SLOT(updateUiTexture()));
+		connect(mWidgetScene, SIGNAL(changed(const QList<QRectF> &)), this, SLOT(setUiDirty()));
 
 		connect(InputManager::getSingletonPtr(), SIGNAL(mousePressEvent(QMouseEvent*)), this, SLOT(mousePressEvent(QMouseEvent*)));
 		connect(InputManager::getSingletonPtr(), SIGNAL(mouseReleaseEvent(QMouseEvent*)), this, SLOT(mouseReleaseEvent(QMouseEvent*)));
@@ -182,6 +182,11 @@ namespace Cutexture
 	void UiManager::keyReleaseEvent(QKeyEvent *event)
 	{
 		QApplication::sendEvent(mWidgetView->viewport(), event);
+	}
+	
+	void UiManager::setUiDirty(bool aDirty)
+	{
+		mUiDirty = aDirty;
 	}
 	
 	QWidget* UiManager::loadUiFile(const QString &aUiFile, QWidget *aParent)

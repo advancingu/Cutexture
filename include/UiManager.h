@@ -45,6 +45,13 @@ namespace Cutexture
 		/** Initializes the user interface widgets and triggers a repaint
 		 * of the user interface texture. */
 		void setupUserInterfaceWidgets();
+		
+		inline bool isUiDirty() const { return mUiDirty; }
+		
+		/** Renders mTopLevelWidget into mWidgetBuffer and copies the
+		 * result to an Ogre texture.
+		 * @see uiRepaintRequired() */
+		void updateUiTexture();
 
 	public slots:
 		void resizeEvent(QResizeEvent *event);
@@ -53,12 +60,7 @@ namespace Cutexture
 		void mouseMoveEvent(QMouseEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void keyReleaseEvent(QKeyEvent *event);
-
-	signals:
-	/** Signal which is fired when the UI widgets need to be repainted.
-	 * If the receiver wants to render the widgets, only a
-	 * Qt::QueuedConnection must be used to connect to this signal. */
-	void uiRepaintRequired();
+		void setUiDirty(bool aDirty = true);
 
 	private:
 		
@@ -75,13 +77,9 @@ namespace Cutexture
 		/** Pointer to the widget currently possessing keyboard focus. 
 		 * Null if no focus set. */
 		QWidget *mFocusedWidget;
+		
+		bool mUiDirty;
 
 		QWidget* loadUiFile(const QString &aUiFile, QWidget *aParent = 0);
-
-private	slots:
-	/** Renders mTopLevelWidget into mWidgetBuffer and copies the
-	 * result to an Ogre texture.
-	 * @see uiRepaintRequired() */
-	void updateUiTexture();
 };
 }
