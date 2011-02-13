@@ -31,6 +31,8 @@
 #include "Exception.h"
 #include "OgreCore.h"
 
+#include <QWebView>
+
 using namespace Cutexture::Utility;
 
 template<> Cutexture::UiManager* Ogre::Singleton<Cutexture::UiManager>::ms_Singleton = 0;
@@ -79,6 +81,10 @@ namespace Cutexture
 	
 		mTopLevelWidget = loadUiFile("game.ui");
 		mTopLevelWidget->setAttribute(Qt::WA_TranslucentBackground);
+		
+		QWebView *web  = new QWebView();
+		web->load(QUrl("http://mrdoob.com/projects/chromeexperiments/ball_pool/"));
+		mTopLevelWidget->layout()->addWidget(web);
 	
 		mWidgetScene->addWidget(mTopLevelWidget);
 	}
