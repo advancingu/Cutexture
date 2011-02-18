@@ -3,6 +3,7 @@
 CMakeCache.txt
 CMakeFiles
 Makefile
-include/moc_*
+moc_*.cxx
 cmake_install.cmake
 CUTEXTURE
+output
