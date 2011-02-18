@@ -42,9 +42,11 @@ namespace Cutexture
 		UiManager();
 		virtual ~UiManager();
 
-		/** Initializes the user interface widgets and triggers a repaint
-		 * of the user interface texture. */
-		void setupUserInterfaceWidgets();
+		/** Sets aWidget as the currently visible widget. */
+		void setActiveWidget(QWidget *aWidget);
+		/** Set aTexture as the texture to render the active widget into. */
+		void setUiTexture(const Ogre::TexturePtr &aTexutre);
+		void setInputManager(InputManager *aInputManager);
 		
 		inline bool isUiDirty() const { return mUiDirty; }
 		
@@ -79,7 +81,7 @@ namespace Cutexture
 		QWidget *mFocusedWidget;
 		
 		bool mUiDirty;
-
-		QWidget* loadUiFile(const QString &aUiFile, QWidget *aParent = 0);
+		Ogre::ResourceHandle mTextureRsrcHandle;
+		InputManager *mInputManager;
 };
 }

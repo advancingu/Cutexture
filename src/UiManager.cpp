@@ -25,13 +25,9 @@
 
 #include "UiManager.h"
 #include "InputManager.h"
-#include "SceneManager.h"
 #include "Constants.h"
 #include "TextureMath.h"
 #include "Exception.h"
-#include "OgreCore.h"
-
-#include <QWebView>
 
 using namespace Cutexture::Utility;
 
@@ -42,12 +38,12 @@ namespace Cutexture
 	
 	UiManager::UiManager() :
 		mWidgetScene(NULL), mWidgetView(NULL), mTopLevelWidget(NULL),
-				mFocusedWidget(NULL), mUiDirty(false)
+				mFocusedWidget(NULL), mUiDirty(false), mTextureRsrcHandle(0),
+				mInputManager(NULL)
 	{
 		mWidgetScene = new QGraphicsScene(this);
 		mWidgetView = new QGraphicsView(mWidgetScene);
 		mWidgetView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-		
 		
 		// for debugging, show Qt's window with
 		// mWidgetView->show();
@@ -59,34 +55,56 @@ namespace Cutexture
 		QApplication::sendEvent(mWidgetScene, &wsce);
 		
 		connect(mWidgetScene, SIGNAL(changed(const QList<QRectF> &)), this, SLOT(setUiDirty()));
-
-		connect(InputManager::getSingletonPtr(), SIGNAL(mousePressEvent(QMouseEvent*)), this, SLOT(mousePressEvent(QMouseEvent*)));
-		connect(InputManager::getSingletonPtr(), SIGNAL(mouseReleaseEvent(QMouseEvent*)), this, SLOT(mouseReleaseEvent(QMouseEvent*)));
-		connect(InputManager::getSingletonPtr(), SIGNAL(mouseMoveEvent(QMouseEvent*)), this, SLOT(mouseMoveEvent(QMouseEvent*)));
-
-		connect(InputManager::getSingletonPtr(), SIGNAL(keyPressEvent(QKeyEvent*)), this, SLOT(keyPressEvent(QKeyEvent*)));
-		connect(InputManager::getSingletonPtr(), SIGNAL(keyReleaseEvent(QKeyEvent*)), this, SLOT(keyReleaseEvent(QKeyEvent*)));
 	}
 
 	UiManager::~UiManager()
 	{
+		QEvent wsce(QEvent::WindowDeactivate);
+		QApplication::sendEvent(mWidgetScene, &wsce);
+		
+		// Note: For ~QGraphicsScene to be able to run, qApp must still be valid.
 	}
 	
-	void UiManager::setupUserInterfaceWidgets()
+	void UiManager::setActiveWidget(QWidget *aWidget)
 	{
 		if (!mWidgetScene)
 		{
 			EXCEPTION("Cannot create widgets. mWidgetScene uninitialized.", "UiManager::setupUserInterfaceWidgets()");
 		}
 	
-		mTopLevelWidget = loadUiFile("game.ui");
-		mTopLevelWidget->setAttribute(Qt::WA_TranslucentBackground);
-		
-		QWebView *web  = new QWebView();
-		web->load(QUrl("http://mrdoob.com/projects/chromeexperiments/ball_pool/"));
-		mTopLevelWidget->layout()->addWidget(web);
+		mWidgetScene->addWidget(aWidget);
+		mTopLevelWidget = aWidget;
+	}
 	
-		mWidgetScene->addWidget(mTopLevelWidget);
+	void UiManager::setUiTexture(const Ogre::TexturePtr &aTexutre)
+	{
+		mTextureRsrcHandle = aTexutre->getHandle();
+		qDebug() << "handle" << mTextureRsrcHandle;
+	}
+	
+	void UiManager::setInputManager(InputManager *aInputManager)
+	{
+		if (mInputManager && aInputManager != mInputManager)
+		{
+			disconnect(mInputManager, 0, this, 0);
+		}
+		
+		if (aInputManager == 0 || !aInputManager->isInitialized())
+		{
+			EXCEPTION("InputManager not initialized.", "UiManager::setInputManager(InputManager *)");
+		}
+		
+		mInputManager = aInputManager;
+		
+		if (mInputManager)
+		{
+			connect(mInputManager, SIGNAL(mousePressEvent(QMouseEvent*)), this, SLOT(mousePressEvent(QMouseEvent*)));
+			connect(mInputManager, SIGNAL(mouseReleaseEvent(QMouseEvent*)), this, SLOT(mouseReleaseEvent(QMouseEvent*)));
+			connect(mInputManager, SIGNAL(mouseMoveEvent(QMouseEvent*)), this, SLOT(mouseMoveEvent(QMouseEvent*)));
+
+			connect(mInputManager, SIGNAL(keyPressEvent(QKeyEvent*)), this, SLOT(keyPressEvent(QKeyEvent*)));
+			connect(mInputManager, SIGNAL(keyReleaseEvent(QKeyEvent*)), this, SLOT(keyReleaseEvent(QKeyEvent*)));			
+		}
 	}
 	
 	void UiManager::resizeEvent(QResizeEvent *event)
@@ -95,23 +113,30 @@ namespace Cutexture
 		Ogre::uint newTexWidth = nextHigherPowerOfTwo(event->size().width());
 		Ogre::uint newTexHeight = nextHigherPowerOfTwo(event->size().height());
 	
-		mTopLevelWidget->resize(event->size());
+		if (mTopLevelWidget)
+		{
+			mTopLevelWidget->resize(event->size());
+		}
 	
 		mWidgetView->setGeometry(QRect(0, 0, newTexWidth, newTexHeight));
 	
-		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingletonPtr()->getByName(Constants::UI_TEXTURE_NAME);
+		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingletonPtr()->getByHandle(mTextureRsrcHandle);
+		
 		if (!txtr.isNull())
 		{
+			std::string txtrName = txtr->getName();
+			
 			Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("RttMat");
 	
 			// remove the old texture
 			txtr->unload();
 			mat->getTechnique(0)->getPass(0)->removeAllTextureUnitStates();
-			Ogre::TextureManager::getSingleton().remove(Constants::UI_TEXTURE_NAME);
+			Ogre::TextureManager::getSingleton().remove(mTextureRsrcHandle);
 	
 			txtr = Ogre::TextureManager::getSingleton().createManual(
-					Constants::UI_TEXTURE_NAME, "General", Ogre::TEX_TYPE_2D, newTexWidth, newTexHeight, 0, Ogre::PF_A8R8G8B8,
+					txtrName, "General", Ogre::TEX_TYPE_2D, newTexWidth, newTexHeight, 0, Ogre::PF_A8R8G8B8,
 					Ogre::TU_DYNAMIC_WRITE_ONLY);
+			mTextureRsrcHandle = txtr->getHandle();
 	
 			// add the new texture
 			Ogre::TextureUnitState* txtrUstate = mat->getTechnique(0)->getPass(0)->createTextureUnitState(Constants::UI_TEXTURE_NAME);
@@ -195,25 +220,10 @@ namespace Cutexture
 		mUiDirty = aDirty;
 	}
 	
-	QWidget* UiManager::loadUiFile(const QString &aUiFile, QWidget *aParent)
-	{
-		QUiLoader uiLoader;
-	
-		QFile file(aUiFile);
-		assert(file.exists());
-		file.open(QFile::ReadOnly);
-	
-		QWidget *generatedWidget = uiLoader.load(&file, aParent);
-	
-		file.close();
-	
-		return generatedWidget;
-	}
-	
 	void UiManager::updateUiTexture()
 	{
 		// update the Ogre texture
-		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingletonPtr()->getByName(Constants::UI_TEXTURE_NAME);
+		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingletonPtr()->getByHandle(mTextureRsrcHandle);
 		
 		if (!txtr.isNull())
 		{

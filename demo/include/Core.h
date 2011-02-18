@@ -73,5 +73,7 @@ namespace Cutexture
 		 * Initialized to 1/30 (i.e. 30 FPS) before first frame is 
 		 * rendered. */
 		Ogre::Real mFrameUpdateRate;
+
+		QWidget* loadUiFile(const QString &aUiFile, QWidget *aParent = 0);
 	};
 }

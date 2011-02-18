@@ -26,7 +26,6 @@
 #include "InputManager.h"
 #include "UiManager.h"
 #include "Exception.h"
-#include "OgreCore.h"
 #include "Constants.h"
 
 template<> Cutexture::InputManager* Ogre::Singleton<Cutexture::InputManager>::ms_Singleton = 0;
@@ -114,8 +113,7 @@ namespace Cutexture
 			unsigned int width, height, depth;
 			int left, top;
 			
-			OgreCore::getSingleton().getOgreRenderWindow()->getMetrics(width, height, depth, left,
-					top);
+			aRenderWindow->getMetrics(width, height, depth, left, top);
 			mOisMouse->getMouseState().width = width;
 			mOisMouse->getMouseState().height = height;
 			mOisMouse->setEventCallback(this);

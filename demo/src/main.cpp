@@ -33,18 +33,19 @@
 
 int main(int argc, char *argv[])
 {
+	QApplication app(argc, argv);
+	
 	QScopedPointer<Cutexture::Core> corePtr;
 	
 	try
 	{
-		QApplication app(argc, argv);
-		
 		//Run the game
 		corePtr.reset(new Cutexture::Core());
 		// blocking call; we advance Qt's event loop in this method; no need to call app.exec()
 		corePtr->go();
 		
-		Ogre::LogManager::getSingleton().logMessage("Cutexture finished running, exiting...");
+		qDebug("finished");
+//		Ogre::LogManager::getSingleton().logMessage("Cutexture finished running, exiting...");
 		
 		return 0;
 	}

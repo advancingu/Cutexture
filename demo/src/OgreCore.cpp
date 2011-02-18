@@ -118,8 +118,7 @@ namespace Cutexture
 		}
 
 		mSceneManager->setupUserInterfaceElements();
-		
-		mUiManager->setupUserInterfaceWidgets();
+		mUiManager->setUiTexture(Ogre::TextureManager::getSingletonPtr()->getByName(Constants::UI_TEXTURE_NAME));
 	}
 	
 	void OgreCore::renderFrame()

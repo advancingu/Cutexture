@@ -75,6 +75,17 @@ namespace Cutexture
 		
 		mOgreCore->setupUserInterface();
 		
+		QWidget *ui = loadUiFile("game.ui");
+//		QWidget *ui = new QWidget();
+		ui->setAttribute(Qt::WA_TranslucentBackground);
+		
+//		QWebView *web  = new QWebView();
+//		web->load(QUrl("http://mrdoob.com/projects/chromeexperiments/ball_pool/"));
+//		ui->layout()->addWidget(web);
+
+		UiManager::getSingletonPtr()->setActiveWidget(ui);
+		UiManager::getSingletonPtr()->setInputManager(mInputManager);
+		
 		QCoreApplication::instance()->processEvents();
 		
 		SceneManager::getSingletonPtr()->setupDefaultScene();
@@ -137,4 +148,18 @@ namespace Cutexture
 		mEndCoreLoop = true;
 	}
 
+	QWidget* Core::loadUiFile(const QString &aUiFile, QWidget *aParent)
+	{
+		QUiLoader uiLoader;
+	
+		QFile file(aUiFile);
+		assert(file.exists());
+		file.open(QFile::ReadOnly);
+	
+		QWidget *generatedWidget = uiLoader.load(&file, aParent);
+	
+		file.close();
+	
+		return generatedWidget;
+	}
 }

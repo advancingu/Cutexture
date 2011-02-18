@@ -47,6 +47,7 @@ Q_OBJECT		;
 		virtual ~InputManager();
 
 		void initialize(Ogre::RenderWindow *aRenderWindow);
+		inline bool isInitialized() const { qDebug() << "isInitialized" << mOis << mOisKeyboard << mOisMouse; return (mOis && mOisKeyboard && mOisMouse); }
 
 		/** Updates the current input state. */
 		void update();
