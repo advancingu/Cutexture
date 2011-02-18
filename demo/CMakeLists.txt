@@ -244,6 +244,6 @@ install(FILES ${CUTEXTURE_OGRE_RESOURCES}
 	RENAME resources.cfg
 )
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/game.ui
+install(FILES ${DEMO_DIR}/ui/game.ui
 	DESTINATION ${CUTEXTURE_INSTALL_DIR}
 )

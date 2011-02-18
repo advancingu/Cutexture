@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "Prerequisites.h"
-
 namespace Cutexture
 {
 	namespace Enums
@@ -49,7 +47,7 @@ namespace Cutexture
 			YawCounterClock = 0x100,
 			YawClock = 0x200,
 		};
-Q_DECLARE_FLAGS	(Movements, Movement)
-	Q_DECLARE_OPERATORS_FOR_FLAGS(Movements)
-}
+		Q_DECLARE_FLAGS	(Movements, Movement)
+		Q_DECLARE_OPERATORS_FOR_FLAGS(Movements)
+	}
 }

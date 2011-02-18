@@ -25,9 +25,7 @@
 
 #pragma once
 
-#include "Prerequisites.h"
-#include <OgreCommon.h>
-#include <QtCore/QString>
+#include <OgreString.h>
 
 namespace Cutexture
 {
@@ -39,13 +37,7 @@ namespace Cutexture
 		 * in Ogre. */
 		static const Ogre::String UI_TEXTURE_NAME = "UiTexture";
 		
-		static const Ogre::String SCENE_MANAGER_NAME = "SceneManager";
-		
-		static const QString SETTINGS_FILENAME = "CutextureSettings.ini";
-		
 		static const int INPUT_MANAGER_MOUSE_OFFSET_X = 6;
 		static const int INPUT_MANAGER_MOUSE_OFFSET_Y = 6;
-		
-		static const Ogre::Real MOVEMENT_RATE_PER_SECOND = 10.0; // 10 meters per second.
 	}
 }

@@ -29,6 +29,7 @@
 #include "Enums.h"
 #include "OgreCore.h"
 #include "Constants.h"
+#include "DemoConstants.h"
 
 using namespace Ogre;
 
@@ -41,7 +42,7 @@ namespace Cutexture
 		// Create the Ogre SceneManager, in this case a generic one. Ogre::Root will hold onto the 
 		// reference so we don't need to keep it around.
 		Ogre::Root::getSingleton().createSceneManager(Ogre::ST_GENERIC,
-				Constants::SCENE_MANAGER_NAME);
+				DemoConstants::SCENE_MANAGER_NAME);
 	}
 	
 	SceneManager::~SceneManager()
@@ -52,7 +53,7 @@ namespace Cutexture
 	void SceneManager::setupDefaultScene()
 	{
 		Ogre::SceneManager *sceneManager = Ogre::Root::getSingletonPtr()->getSceneManager(
-				Constants::SCENE_MANAGER_NAME);
+				DemoConstants::SCENE_MANAGER_NAME);
 		
 		
 		// Create the camera
@@ -83,7 +84,7 @@ namespace Cutexture
 	void SceneManager::setupUserInterfaceElements()
 	{
 		Ogre::SceneManager *sceneManager = Ogre::Root::getSingletonPtr()->getSceneManager(
-				Constants::SCENE_MANAGER_NAME);
+				DemoConstants::SCENE_MANAGER_NAME);
 		
 		Ogre::Rectangle2D *miniScreen = new Ogre::Rectangle2D(true);
 		miniScreen->setCorners(-1.0, 1.0, 1.0, -1.0);

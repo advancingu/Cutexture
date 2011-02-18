@@ -26,43 +26,19 @@
 #pragma once
 
 #include <OgreString.h>
+#include <OgreCommon.h>
+#include <QtCore/QString>
 
 namespace Cutexture
 {
-#define EXCEPTION(desc, src) throw Cutexture::Exception(desc, src, __FILE__)
-	
-	class Exception: public std::exception
+	/** Centrally defines application-wide constants to reduce 
+	 * cross-referencing between components. */
+	namespace DemoConstants
 	{
-	public:
-		Exception(const Ogre::String &description, const Ogre::String &source, const char *file);
-		~Exception() throw ()
-		{
-		}
+		static const Ogre::String SCENE_MANAGER_NAME = "SceneManager";
 		
-		const Ogre::String &getFullDescription() const;
-		const Ogre::String &getSource() const
-		{
-			return source;
-		}
-		const Ogre::String &getFile() const
-		{
-			return file;
-		}
-		const Ogre::String &getDescription(void) const
-		{
-			return description;
-		}
+		static const QString SETTINGS_FILENAME = "CutextureSettings.ini";
 		
-		const char* what() const throw ()
-		{
-			return getFullDescription().c_str();
-		}
-		
-	private:
-		Ogre::String description;
-		Ogre::String source;
-		Ogre::String file;
-		mutable Ogre::String fullDescription;
-	};
-
+		static const Ogre::Real MOVEMENT_RATE_PER_SECOND = 10.0; // 10 meters per second.
+	}
 }

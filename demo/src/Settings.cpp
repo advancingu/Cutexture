@@ -24,7 +24,7 @@
  */
 
 #include "Settings.h"
-#include "Constants.h"
+#include "DemoConstants.h"
 
 template<> Cutexture::Settings* Ogre::Singleton<Cutexture::Settings>::ms_Singleton = 0;
 
@@ -37,7 +37,7 @@ namespace Cutexture
 		QString path = QDir::currentPath();
 		path += QDir::separator();
 		
-		path += Constants::SETTINGS_FILENAME;
+		path += DemoConstants::SETTINGS_FILENAME;
 		
 		
 		// check if path is valid

@@ -25,10 +25,6 @@
 
 #pragma once
 
-#include "Prerequisites.h"
-#include "Exception.h"
-#include <limits.h>
-
 namespace Cutexture
 {
 	namespace Utility
