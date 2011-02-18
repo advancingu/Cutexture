@@ -211,7 +211,7 @@ namespace Cutexture
 
 		if (modKey == Qt::NoModifier || modKey == Qt::KeypadModifier)
 		{
-			QKeyEvent keyEvent(QEvent::KeyPress, toQtKey(arg), mModifiersPressed, toQtKeyText(arg));
+			QKeyEvent keyEvent(QEvent::KeyPress, pressedKey, mModifiersPressed, toQtKeyText(arg));
 			emit(keyPressEvent(&keyEvent));
 		}
 		

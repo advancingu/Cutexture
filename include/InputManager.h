@@ -41,13 +41,13 @@ namespace Cutexture
 			public OIS::MouseListener,
 			public OIS::KeyListener
 	{
-Q_OBJECT		;
+	Q_OBJECT;
 	public:
 		InputManager();
 		virtual ~InputManager();
 
 		void initialize(Ogre::RenderWindow *aRenderWindow);
-		inline bool isInitialized() const { qDebug() << "isInitialized" << mOis << mOisKeyboard << mOisMouse; return (mOis && mOisKeyboard && mOisMouse); }
+		inline bool isInitialized() const { return (mOis && mOisKeyboard && mOisMouse); }
 
 		/** Updates the current input state. */
 		void update();
@@ -60,14 +60,14 @@ Q_OBJECT		;
 		QPoint getRelativeMouseMovement() const;
 
 		/** Returns the currently active movement actions. */
-		inline Enums::Movements getMovementsActive()
-		{	return mMovementsActive;}
+		inline Enums::Movements getMovementsActive() const 
+			{ return mMovementsActive; }
 
 		/** Returns the currently pressed mouse buttons. */
-		inline Qt::MouseButtons getMouseButtonsPressed()
-		{	return mMouseButtonsPressed;}
+		inline Qt::MouseButtons getMouseButtonsPressed() const
+			{ return mMouseButtonsPressed; }
 
-		signals:
+	signals:
 		void keyPressEvent(QKeyEvent *event);
 		void keyReleaseEvent(QKeyEvent *event);
 		void mousePressEvent(QMouseEvent *event);
