@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "Prerequisites.h"
+#include "InputManager.h"
 
+#include <OgreSingleton.h>
 #include <QtCore/QObject>
 
 namespace Cutexture
@@ -42,17 +43,21 @@ namespace Cutexture
 		UiManager();
 		virtual ~UiManager();
 
-		/** Sets aWidget as the currently visible widget. */
+		/** Sets aWidget as the currently visible UI widget. */
 		void setActiveWidget(QWidget *aWidget);
-		/** Set aTexture as the texture to render the active widget into. */
+		
+		/** Set aTexture as the texture to render the active UI widget into. */
 		void setUiTexture(const Ogre::TexturePtr &aTexutre);
+		
+		/** Sets the InputManager which will provide input events 
+		 * to the UI. */
 		void setInputManager(InputManager *aInputManager);
 		
+		/** @return True, if the UI texture needs to be repainted. */
 		inline bool isUiDirty() const { return mUiDirty; }
 		
-		/** Renders mTopLevelWidget into mWidgetBuffer and copies the
-		 * result to an Ogre texture.
-		 * @see uiRepaintRequired() */
+		/** Renders mTopLevelWidget into the texture specified by 
+		 * mTextureRsrcHandle. */
 		void updateUiTexture();
 
 	public slots:
@@ -80,8 +85,16 @@ namespace Cutexture
 		 * Null if no focus set. */
 		QWidget *mFocusedWidget;
 		
+		/** Indicates if the UI texture needs to be updated due to a  
+		 * change in mWidgetScene. */
 		bool mUiDirty;
+		
+		/** Resource handle of the texture into which the UI will 
+		 * be painted. */
 		Ogre::ResourceHandle mTextureRsrcHandle;
+		
+		/** Pointer to InputManager which provides input events to 
+		 * the UI. */
 		InputManager *mInputManager;
-};
+	};
 }
