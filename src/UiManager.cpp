@@ -67,10 +67,7 @@ namespace Cutexture
 	
 	void UiManager::setActiveWidget(QWidget *aWidget)
 	{
-		if (!mWidgetScene)
-		{
-			EXCEPTION("Cannot create widgets. mWidgetScene uninitialized.", "UiManager::setupUserInterfaceWidgets()");
-		}
+		assert(mWidgetScene);
 		
 		if (mTopLevelWidget && mTopLevelWidget != aWidget)
 		{
