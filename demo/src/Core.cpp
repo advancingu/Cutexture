@@ -33,6 +33,8 @@
 #include "Settings.h"
 #include <iostream>
 
+#include <QWebView>
+
 using namespace std;
 
 template<> Cutexture::Core* Ogre::Singleton<Cutexture::Core>::ms_Singleton = 0;
@@ -76,12 +78,11 @@ namespace Cutexture
 		mOgreCore->setupUserInterface();
 		
 		QWidget *ui = loadUiFile("game.ui");
-//		QWidget *ui = new QWidget();
 		ui->setAttribute(Qt::WA_TranslucentBackground);
 		
-//		QWebView *web  = new QWebView();
-//		web->load(QUrl("http://mrdoob.com/projects/chromeexperiments/ball_pool/"));
-//		ui->layout()->addWidget(web);
+		QWebView *web  = new QWebView();
+		web->load(QUrl("http://mrdoob.com/projects/chromeexperiments/ball_pool/"));
+		ui->layout()->addWidget(web);
 
 		UiManager::getSingletonPtr()->setActiveWidget(ui);
 		UiManager::getSingletonPtr()->setInputManager(mInputManager);
