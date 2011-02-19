@@ -31,6 +31,8 @@
 #include "Constants.h"
 #include "DemoConstants.h"
 
+#include <OgreManualObject.h>
+
 using namespace Ogre;
 
 template<> Cutexture::SceneManager* Ogre::Singleton<Cutexture::SceneManager>::ms_Singleton = 0;
@@ -43,6 +45,15 @@ namespace Cutexture
 		// reference so we don't need to keep it around.
 		Ogre::Root::getSingleton().createSceneManager(Ogre::ST_GENERIC,
 				DemoConstants::SCENE_MANAGER_NAME);
+		
+		// create a material
+		Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create("RttMat",
+				Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+		Ogre::Technique *technique = mat->createTechnique();
+		technique->createPass();
+		mat->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+		mat->getTechnique(0)->getPass(0)->setSceneBlending(SBT_TRANSPARENT_ALPHA);
+		//		mat->getTechnique(0)->getPass(0)->setDepthBias(1);
 	}
 	
 	SceneManager::~SceneManager()
@@ -70,15 +81,17 @@ namespace Cutexture
 		l->setDirection(-Vector3::UNIT_Y);
 		
 		Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
-		Ogre::MeshManager::getSingleton().createPlane("ground",
-				Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 100, 100, 20, 20,
-				true, 1, 5, 5, Ogre::Vector3::UNIT_X);
+		Ogre::MeshManager::getSingleton().createPlane("ground", 
+				Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane, 100, 100, 20, 20, 
+				true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
+		Ogre::Entity* groundEnt = sceneManager->createEntity("GroundEntity", "ground");
+//		groundEnt->setMaterialName("RttMat");
 		
-		Ogre::Entity* ent = sceneManager->createEntity("GroundEntity", "ground");
-		Ogre::SceneNode *childNode = sceneManager->getRootSceneNode()->createChildSceneNode();
-		childNode->attachObject(ent);
+		Ogre::SceneNode *groundNode = sceneManager->getRootSceneNode()->createChildSceneNode();
+		groundNode->attachObject(groundEnt);
+		
 		ViewManager::getSingletonPtr()->getPrimaryViewport()->getCamera()->lookAt(
-				childNode->getPosition());
+				groundNode->getPosition());
 	}
 	
 	void SceneManager::setupUserInterfaceElements()
@@ -96,15 +109,7 @@ namespace Cutexture
 				"MiniScreenNode");
 		miniScreenNode->attachObject(miniScreen);
 		
-		
-		// create a material
-		Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create("RttMat",
-				Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-		Ogre::Technique *technique = mat->createTechnique();
-		technique->createPass();
-		mat->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-		mat->getTechnique(0)->getPass(0)->setSceneBlending(SBT_TRANSPARENT_ALPHA);
-		//		mat->getTechnique(0)->getPass(0)->setDepthBias(1);
+		Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("RttMat");
 		
 
 		// assign to mini screen
