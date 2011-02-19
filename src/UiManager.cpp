@@ -71,6 +71,19 @@ namespace Cutexture
 		{
 			EXCEPTION("Cannot create widgets. mWidgetScene uninitialized.", "UiManager::setupUserInterfaceWidgets()");
 		}
+		
+		if (mTopLevelWidget && mTopLevelWidget != aWidget)
+		{
+			if (mFocusedWidget)
+			{
+				QEvent foe(QEvent::FocusOut);
+				QApplication::sendEvent(mFocusedWidget, &foe);
+				mFocusedWidget = NULL;
+			}
+
+			mWidgetScene->clear();
+			mTopLevelWidget = NULL;
+		}
 	
 		mWidgetScene->addWidget(aWidget);
 		mTopLevelWidget = aWidget;
@@ -79,7 +92,6 @@ namespace Cutexture
 	void UiManager::setUiTexture(const Ogre::TexturePtr &aTexutre)
 	{
 		mTextureRsrcHandle = aTexutre->getHandle();
-		qDebug() << "handle" << mTextureRsrcHandle;
 	}
 	
 	void UiManager::setInputManager(InputManager *aInputManager)
