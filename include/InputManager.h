@@ -48,7 +48,9 @@ namespace Cutexture
 		void initialize(Ogre::RenderWindow *aRenderWindow);
 		inline bool isInitialized() const { return (mOis && mOisKeyboard && mOisMouse); }
 
-		/** Updates the current input state. */
+		/** Updates the current input state and stores the Qt 
+		 * keyboard and mouse events in a buffer. 
+		 * @see emitInputEvents() */
 		void updateInputState();
 
 		/** Call to update the input manager based on the new
@@ -65,6 +67,10 @@ namespace Cutexture
 		/** Returns the currently pressed mouse buttons. */
 		inline Qt::MouseButtons getMouseButtonsPressed() const
 			{ return mMouseButtonsPressed; }
+		
+		/** Emits all input events which have accumulated 
+		 * since the last time this method was called. */
+		void emitInputEvents();
 
 	signals:
 		void keyPressEvent(QKeyEvent *event);
@@ -100,6 +106,12 @@ namespace Cutexture
 
 		/** Bitflag of currently active movement actions. */
 		Enums::Movements mMovementsActive;
+		
+		/** List of unprocessed key and mouse events which were 
+		 * received from OIS since the last time applyInputEvents() 
+		 * was called. 
+		 * @see emitInputEvents() */
+		QVector<QInputEvent *> mInputEvents;
 
 		/** From an OIS key event, convert to a Qt key code. */
 		Qt::Key toQtKey(const OIS::KeyEvent &aEvent) const;

@@ -121,6 +121,7 @@ namespace Cutexture
 				break;
 			}
 
+			mInputManager->emitInputEvents();
 			mGame->applyGameLogic();
 			
 			UiManager *uiMan = UiManager::getSingletonPtr();

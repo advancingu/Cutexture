@@ -148,6 +148,37 @@ namespace Cutexture
 		return QPoint(mouseState.X.rel, mouseState.Y.rel);
 	}
 	
+	void InputManager::emitInputEvents()
+	{
+		for (QVector<QInputEvent *>::iterator i = mInputEvents.begin(); i != mInputEvents.end(); ++i)
+		{
+			QEvent *event = (*i);
+			switch (event->type())
+			{
+				case QEvent::KeyPress:
+					emit(keyPressEvent(static_cast<QKeyEvent *>(event)));
+					break;
+				case QEvent::KeyRelease:
+					emit(keyReleaseEvent(static_cast<QKeyEvent *>(event)));
+					break;
+				case QEvent::MouseMove:
+					emit(mouseMoveEvent(static_cast<QMouseEvent *>(event)));
+					break;
+				case QEvent::MouseButtonPress:
+					emit(mousePressEvent(static_cast<QMouseEvent *>(event)));
+					break;
+				case QEvent::MouseButtonRelease:
+					emit(mouseReleaseEvent(static_cast<QMouseEvent *>(event)));
+					break;
+				default:
+					break;
+			}
+		}
+		
+		qDeleteAll(mInputEvents);
+		mInputEvents.clear();
+	}
+	
 	bool InputManager::mouseMoved(const OIS::MouseEvent &arg)
 	{
 		QPoint eventPoint(arg.state.X.abs, arg.state.Y.abs);
@@ -155,9 +186,10 @@ namespace Cutexture
 				Constants::INPUT_MANAGER_MOUSE_OFFSET_Y);
 		//		qDebug() << "mouseMoved" << eventPoint;
 
-		QMouseEvent mouseEvent(QEvent::MouseMove, eventPoint, eventPoint, Qt::NoButton,
+		QMouseEvent *mouseEvent = new QMouseEvent(QEvent::MouseMove, eventPoint, eventPoint, Qt::NoButton,
 				mMouseButtonsPressed, Qt::NoModifier);
-		emit(mouseMoveEvent(&mouseEvent));
+		mInputEvents.append(mouseEvent);
+		
 		return true;
 	}
 	
@@ -170,9 +202,10 @@ namespace Cutexture
 
 		mMouseButtonsPressed |= toQtMouseButton(id);
 		
-		QMouseEvent mouseEvent(QEvent::MouseButtonPress, eventPoint, eventPoint,
+		QMouseEvent *mouseEvent = new QMouseEvent(QEvent::MouseButtonPress, eventPoint, eventPoint,
 				toQtMouseButton(id), mMouseButtonsPressed, Qt::NoModifier);
-		emit(mousePressEvent(&mouseEvent));
+		mInputEvents.append(mouseEvent);
+		
 		return true;
 	}
 	
@@ -187,9 +220,10 @@ namespace Cutexture
 		
 		
 		// do not include the released button in the mMouseButtonsPressed enum; @see http://doc.qt.nokia.com/4.5/qmouseevent.html#buttons
-		QMouseEvent mouseEvent(QEvent::MouseButtonRelease, eventPoint, eventPoint, toQtMouseButton(
+		QMouseEvent *mouseEvent = new QMouseEvent(QEvent::MouseButtonRelease, eventPoint, eventPoint, toQtMouseButton(
 				id), mMouseButtonsPressed, Qt::NoModifier);
-		emit(mouseReleaseEvent(&mouseEvent));
+		mInputEvents.append(mouseEvent);
+		
 		return true;
 	}
 	
@@ -211,8 +245,8 @@ namespace Cutexture
 
 		if (modKey == Qt::NoModifier || modKey == Qt::KeypadModifier)
 		{
-			QKeyEvent keyEvent(QEvent::KeyPress, pressedKey, mModifiersPressed, toQtKeyText(arg));
-			emit(keyPressEvent(&keyEvent));
+			QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, pressedKey, mModifiersPressed, toQtKeyText(arg));
+			mInputEvents.append(keyEvent);
 		}
 		
 		return true;
@@ -227,8 +261,8 @@ namespace Cutexture
 		
 		if (modKey == Qt::NoModifier || modKey == Qt::KeypadModifier)
 		{
-			QKeyEvent keyEvent(QEvent::KeyRelease, releasedKey, mModifiersPressed, toQtKeyText(arg));
-			emit(keyReleaseEvent(&keyEvent));
+			QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyRelease, releasedKey, mModifiersPressed, toQtKeyText(arg));
+			mInputEvents.append(keyEvent);
 		}
 
 		// release the modifier after the keyReleased event was sent
