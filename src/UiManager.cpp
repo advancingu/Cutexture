@@ -31,8 +31,6 @@
 
 using namespace Cutexture::Utility;
 
-template<> Cutexture::UiManager* Ogre::Singleton<Cutexture::UiManager>::ms_Singleton = 0;
-
 namespace Cutexture
 {
 	

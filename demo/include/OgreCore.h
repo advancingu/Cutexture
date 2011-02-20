@@ -95,6 +95,8 @@ namespace Cutexture
 		/** Checks if the Ogre render window was resized and notifies the 
 		 * UiManager if needed. */
 		void processWindowEvents();
+		
+		inline UiManager* getUiManager() const { return mUiManager; }
 
 	protected:
 		

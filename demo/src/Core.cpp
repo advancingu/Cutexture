@@ -84,8 +84,8 @@ namespace Cutexture
 		web->load(QUrl("http://mrdoob.com/projects/chromeexperiments/ball_pool/"));
 		ui->layout()->addWidget(web);
 
-		UiManager::getSingletonPtr()->setActiveWidget(ui);
-		UiManager::getSingletonPtr()->setInputManager(mInputManager);
+		mOgreCore->getUiManager()->setActiveWidget(ui);
+		mOgreCore->getUiManager()->setInputManager(mInputManager);
 		
 		QCoreApplication::instance()->processEvents();
 		
@@ -124,7 +124,7 @@ namespace Cutexture
 			mInputManager->emitInputEvents();
 			mGame->applyGameLogic();
 			
-			UiManager *uiMan = UiManager::getSingletonPtr();
+			UiManager *uiMan = mOgreCore->getUiManager();
 			if (uiMan->isUiDirty())
 			{
 				uiMan->updateUiTexture();

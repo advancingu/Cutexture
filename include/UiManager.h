@@ -27,7 +27,6 @@
 
 #include "InputManager.h"
 
-#include <OgreSingleton.h>
 #include <QtCore/QObject>
 
 namespace Cutexture
@@ -36,7 +35,7 @@ namespace Cutexture
 	 * user interface states and reacting to user and system 
 	 * events which relate to the user interface.
 	 */
-	class UiManager: public QObject, public Ogre::Singleton<UiManager>
+	class UiManager: public QObject
 	{
 	Q_OBJECT
 	public:
