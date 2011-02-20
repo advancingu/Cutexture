@@ -118,7 +118,6 @@ namespace Cutexture
 		}
 
 		mSceneManager->setupUserInterfaceElements();
-		mUiManager->setUiTexture(Ogre::TextureManager::getSingletonPtr()->getByName(Constants::UI_TEXTURE_NAME));
 	}
 	
 	void OgreCore::renderFrame()
@@ -136,7 +135,7 @@ namespace Cutexture
 		return mOgreRenderWindow;
 	}
 	
-	void OgreCore::processWindowEvents()
+	void OgreCore::processWindowEvents(InputManager *aInputManager)
 	{
 		unsigned int currWidth = 0;
 		unsigned int currHeight = 0;
@@ -151,7 +150,10 @@ namespace Cutexture
 			QResizeEvent resizeEvent(QSize(currWidth, currHeight), QSize(mRenderWindowWidth,
 					mRenderWindowHeight));
 			
-			mUiManager->resizeEvent(&resizeEvent);
+			mUiManager->resizeTexture(resizeEvent.size(), Ogre::MaterialManager::getSingleton().getByName("RttMat"), Ogre::TextureManager::getSingletonPtr()->getByName(UI_TEXTURE_NAME));
+			mUiManager->setViewSize(Ogre::TextureManager::getSingletonPtr()->getByName(UI_TEXTURE_NAME));
+			mUiManager->resizeUi(&resizeEvent);
+			aInputManager->resizeEvent(&resizeEvent);
 			
 			mRenderWindowWidth = currWidth;
 			mRenderWindowHeight = currHeight;

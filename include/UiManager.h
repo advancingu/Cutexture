@@ -45,9 +45,6 @@ namespace Cutexture
 		/** Sets aWidget as the currently visible UI widget. */
 		void setActiveWidget(QWidget *aWidget);
 		
-		/** Set aTexture as the texture to render the active UI widget into. */
-		void setUiTexture(const Ogre::TexturePtr &aTexutre);
-		
 		/** Sets the InputManager which will provide input events 
 		 * to the UI. */
 		void setInputManager(InputManager *aInputManager);
@@ -56,11 +53,33 @@ namespace Cutexture
 		inline bool isUiDirty() const { return mUiDirty; }
 		
 		/** Renders mTopLevelWidget into the texture specified by 
-		 * mTextureRsrcHandle. */
-		void updateUiTexture();
+		 * aTexture. */
+		void renderIntoTexture(const Ogre::TexturePtr &aTexture);
 
+		/** Recreates the texture aTexture with a power-of-two 
+		 * sized texture whose size is greater or equal to aSize.
+		 * @param aSize Minimum size of the texture aTexture.
+		 * @param aMaterial To assign aTexture to.
+		 * @param aTexture The texture to resize.
+		 */
+		void resizeTexture(const QSize &aSize, const Ogre::MaterialPtr &aMaterial, 
+				const Ogre::TexturePtr &aTexture);
+		
+		/** Resizes the active UI widget to the size in 
+		 * aEvent->size().
+		 * @param aEvent Target widget size. */
+		void resizeUi(QResizeEvent *aEvent);
+		
+		/** @return True, if the size of mWidgetView is equal to the 
+		 * size of aTexture. */
+		bool isViewSizeMatching(const Ogre::TexturePtr &aTexture) const;
+		
+		/** Sets mWidgetView's geometry to aTexture's dimensions 
+		 * if it is not already of this size.
+		 * @param aTexture The texture to fit mWidgetView to. */
+		void setViewSize(const Ogre::TexturePtr &aTexture);
+		
 	public slots:
-		void resizeEvent(QResizeEvent *event);
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
@@ -87,10 +106,6 @@ namespace Cutexture
 		/** Indicates if the UI texture needs to be updated due to a  
 		 * change in mWidgetScene. */
 		bool mUiDirty;
-		
-		/** Resource handle of the texture into which the UI will 
-		 * be painted. */
-		Ogre::ResourceHandle mTextureRsrcHandle;
 		
 		/** Pointer to InputManager which provides input events to 
 		 * the UI. */

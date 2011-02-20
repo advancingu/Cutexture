@@ -33,10 +33,6 @@ namespace Cutexture
 	 * cross-referencing between components. */
 	namespace Constants
 	{
-		/** Name for accessing the user interface overlay texture 
-		 * in Ogre. */
-		static const Ogre::String UI_TEXTURE_NAME = "UiTexture";
-		
 		static const int INPUT_MANAGER_MOUSE_OFFSET_X = 6;
 		static const int INPUT_MANAGER_MOUSE_OFFSET_Y = 6;
 	}

@@ -110,8 +110,7 @@ namespace Cutexture
 			QCoreApplication::instance()->processEvents();
 			Ogre::WindowEventUtilities::messagePump();
 			
-			mOgreCore->processWindowEvents();
-			
+			mOgreCore->processWindowEvents(mInputManager);
 			
 			// grab the mouse and keyboard state
 			mInputManager->updateInputState();
@@ -127,7 +126,7 @@ namespace Cutexture
 			UiManager *uiMan = mOgreCore->getUiManager();
 			if (uiMan->isUiDirty())
 			{
-				uiMan->updateUiTexture();
+				uiMan->renderIntoTexture(Ogre::TextureManager::getSingletonPtr()->getByName(UI_TEXTURE_NAME));
 				uiMan->setUiDirty(false);
 			}
 			

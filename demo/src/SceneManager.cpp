@@ -116,9 +116,9 @@ namespace Cutexture
 		miniScreen->setMaterial("RttMat");
 		
 		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingleton().createManual(
-				Constants::UI_TEXTURE_NAME, "General", Ogre::TEX_TYPE_2D, 512, 512, 0,
+				UI_TEXTURE_NAME, "General", Ogre::TEX_TYPE_2D, 512, 512, 0,
 				Ogre::PF_A8R8G8B8, Ogre::TU_DYNAMIC_WRITE_ONLY);
-		mat->getTechnique(0)->getPass(0)->createTextureUnitState(Constants::UI_TEXTURE_NAME);
+		mat->getTechnique(0)->getPass(0)->createTextureUnitState(UI_TEXTURE_NAME);
 		txtr->load();
 	}
 }

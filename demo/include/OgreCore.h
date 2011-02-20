@@ -31,6 +31,10 @@
 
 namespace Cutexture
 {
+	/** Name for accessing the user interface overlay texture 
+	 * in Ogre. */
+	static const Ogre::String UI_TEXTURE_NAME = "UiTexture";
+
 	static const QString SETTINGS_CATEGORY_RENDERER_ENGINE = "Renderer Engine";
 	static const QString SETTINGS_CATEGORY_RENDERER_PARAMS = "Renderer Parameters";
 	
@@ -94,7 +98,7 @@ namespace Cutexture
 
 		/** Checks if the Ogre render window was resized and notifies the 
 		 * UiManager if needed. */
-		void processWindowEvents();
+		void processWindowEvents(InputManager *aInputManager);
 		
 		inline UiManager* getUiManager() const { return mUiManager; }
 

@@ -36,7 +36,7 @@ namespace Cutexture
 	
 	UiManager::UiManager() :
 		mWidgetScene(NULL), mWidgetView(NULL), mTopLevelWidget(NULL),
-				mFocusedWidget(NULL), mUiDirty(false), mTextureRsrcHandle(0),
+				mFocusedWidget(NULL), mUiDirty(false),
 				mInputManager(NULL)
 	{
 		mWidgetScene = new QGraphicsScene(this);
@@ -84,11 +84,6 @@ namespace Cutexture
 		mTopLevelWidget = aWidget;
 	}
 	
-	void UiManager::setUiTexture(const Ogre::TexturePtr &aTexutre)
-	{
-		mTextureRsrcHandle = aTexutre->getHandle();
-	}
-	
 	void UiManager::setInputManager(InputManager *aInputManager)
 	{
 		if (mInputManager && aInputManager != mInputManager)
@@ -114,50 +109,44 @@ namespace Cutexture
 		}
 	}
 	
-	void UiManager::resizeEvent(QResizeEvent *event)
+	void UiManager::resizeTexture(const QSize &aSize, const Ogre::MaterialPtr &aMaterial, const Ogre::TexturePtr &aTexture)
 	{
-		// get the smallest power of two dimension that is at least as large as the new window size
-		Ogre::uint newTexWidth = nextHigherPowerOfTwo(event->size().width());
-		Ogre::uint newTexHeight = nextHigherPowerOfTwo(event->size().height());
-	
-		if (mTopLevelWidget)
-		{
-			mTopLevelWidget->resize(event->size());
-		}
-	
-		mWidgetView->setGeometry(QRect(0, 0, newTexWidth, newTexHeight));
-	
-		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingletonPtr()->getByHandle(mTextureRsrcHandle);
+		assert(!aMaterial.isNull());
+		assert(!aTexture.isNull());
 		
-		if (!txtr.isNull())
+		// get the smallest power of two dimension that is at least as large as the new UI size
+		Ogre::uint newTexWidth = nextHigherPowerOfTwo(aSize.width());
+		Ogre::uint newTexHeight = nextHigherPowerOfTwo(aSize.height());
+	
+		if (!aTexture.isNull())
 		{
-			std::string txtrName = txtr->getName();
+			std::string txtrName = aTexture->getName();
 			
-			Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().getByName("RttMat");
-	
 			// remove the old texture
-			txtr->unload();
-			mat->getTechnique(0)->getPass(0)->removeAllTextureUnitStates();
-			Ogre::TextureManager::getSingleton().remove(mTextureRsrcHandle);
+			aTexture->unload();
+			aMaterial->getTechnique(0)->getPass(0)->removeAllTextureUnitStates();
+			Ogre::TextureManager::getSingleton().remove(aTexture->getHandle());
 	
-			txtr = Ogre::TextureManager::getSingleton().createManual(
+			Ogre::TexturePtr newTxtr = Ogre::TextureManager::getSingleton().createManual(
 					txtrName, "General", Ogre::TEX_TYPE_2D, newTexWidth, newTexHeight, 0, Ogre::PF_A8R8G8B8,
 					Ogre::TU_DYNAMIC_WRITE_ONLY);
-			mTextureRsrcHandle = txtr->getHandle();
 	
 			// add the new texture
-			Ogre::TextureUnitState* txtrUstate = mat->getTechnique(0)->getPass(0)->createTextureUnitState(Constants::UI_TEXTURE_NAME);
+			Ogre::TextureUnitState* txtrUstate = aMaterial->getTechnique(0)->getPass(0)->createTextureUnitState(txtrName);
 	
 			// adjust it to stay aligned and scaled to the window
-			Ogre::Real txtrUScale = (Ogre::Real)newTexWidth / event->size().width();
-			Ogre::Real txtrVScale = (Ogre::Real)newTexHeight / event->size().height();
+			Ogre::Real txtrUScale = (Ogre::Real)newTexWidth / aSize.width();
+			Ogre::Real txtrVScale = (Ogre::Real)newTexHeight / aSize.height();
 			txtrUstate->setTextureScale(txtrUScale, txtrVScale);
 			txtrUstate->setTextureScroll((1 / txtrUScale) / 2 - 0.5, (1 / txtrVScale) / 2 - 0.5);
 		}
-		
-		if (mInputManager)
+	}
+	
+	void UiManager::resizeUi(QResizeEvent *aEvent)
+	{
+		if (mTopLevelWidget)
 		{
-			mInputManager->resizeEvent(event);
+			mTopLevelWidget->resize(aEvent->size());
 		}
 	}
 	
@@ -233,26 +222,39 @@ namespace Cutexture
 		mUiDirty = aDirty;
 	}
 	
-	void UiManager::updateUiTexture()
+	bool UiManager::isViewSizeMatching(const Ogre::TexturePtr &aTexture) const
 	{
-		// update the Ogre texture
-		Ogre::TexturePtr txtr = Ogre::TextureManager::getSingletonPtr()->getByHandle(mTextureRsrcHandle);
+		assert(!aTexture.isNull());
 		
-		if (!txtr.isNull())
+		return (aTexture->getWidth() == mWidgetView->width() && aTexture->getHeight() == mWidgetView->height());
+	}
+	
+	void UiManager::setViewSize(const Ogre::TexturePtr &aTexture)
+	{
+		// make sure that the view size matches the texture size
+		if (!aTexture.isNull() && !isViewSizeMatching(aTexture))
 		{
-			Ogre::HardwarePixelBufferSharedPtr hwBuffer = txtr->getBuffer(0, 0);
-			hwBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
-			
-			const Ogre::PixelBox &pb = hwBuffer->getCurrentLock();
-			
-			// render into texture buffer
-			QImage textureImg((uchar *)pb.data, pb.getWidth(), pb.getHeight(), QImage::Format_ARGB32);
-			textureImg.fill(0);
-			
-			QPainter painter(&textureImg);
-			mWidgetView->render(&painter, QRect(QPoint(0, 0), mWidgetView->size()), QRect(QPoint(0, 0), mWidgetView->size()));
-			
-			hwBuffer->unlock();
+			mWidgetView->setGeometry(QRect(0, 0, aTexture->getWidth(), aTexture->getHeight()));
 		}
+	}
+	
+	void UiManager::renderIntoTexture(const Ogre::TexturePtr &aTexture)
+	{
+		assert(!aTexture.isNull());
+		assert(isViewSizeMatching(aTexture));
+		
+		Ogre::HardwarePixelBufferSharedPtr hwBuffer = aTexture->getBuffer(0, 0);
+		hwBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
+		
+		const Ogre::PixelBox &pb = hwBuffer->getCurrentLock();
+		
+		// render into texture buffer
+		QImage textureImg((uchar *)pb.data, pb.getWidth(), pb.getHeight(), QImage::Format_ARGB32);
+		textureImg.fill(0);
+		
+		QPainter painter(&textureImg);
+		mWidgetView->render(&painter, QRect(QPoint(0, 0), mWidgetView->size()), QRect(QPoint(0, 0), mWidgetView->size()));
+		
+		hwBuffer->unlock();
 	}
 }
