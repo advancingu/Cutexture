@@ -190,6 +190,7 @@ namespace Cutexture
 			QEvent foe(QEvent::FocusOut);
 			QApplication::sendEvent(mFocusedWidget, &foe);
 			mFocusedWidget = NULL;
+			mTopLevelWidget->setFocus();
 		}
 	
 		// set the new focus
