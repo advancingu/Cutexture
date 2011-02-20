@@ -152,7 +152,6 @@ namespace Cutexture
 					mRenderWindowHeight));
 			
 			mUiManager->resizeEvent(&resizeEvent);
-			InputManager::getSingletonPtr()->resizeEvent(&resizeEvent);
 			
 			mRenderWindowWidth = currWidth;
 			mRenderWindowHeight = currHeight;

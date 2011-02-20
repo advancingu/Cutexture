@@ -156,6 +156,11 @@ namespace Cutexture
 			txtrUstate->setTextureScale(txtrUScale, txtrVScale);
 			txtrUstate->setTextureScroll((1 / txtrUScale) / 2 - 0.5, (1 / txtrVScale) / 2 - 0.5);
 		}
+		
+		if (mInputManager)
+		{
+			mInputManager->resizeEvent(event);
+		}
 	}
 	
 	void UiManager::mousePressEvent(QMouseEvent *event)

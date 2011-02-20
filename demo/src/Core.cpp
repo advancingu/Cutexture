@@ -92,6 +92,7 @@ namespace Cutexture
 		SceneManager::getSingletonPtr()->setupDefaultScene();
 		
 		mGame = new Game();
+		mGame->setInputManager(mInputManager);
 		
 		Ogre::WindowEventUtilities::messagePump();
 		
@@ -113,14 +114,14 @@ namespace Cutexture
 			
 			
 			// grab the mouse and keyboard state
-			mInputManager->update();
+			mInputManager->updateInputState();
 			
 			if (mEndCoreLoop)
 			{
 				break;
 			}
 
-			mGame->update();
+			mGame->applyGameLogic();
 			
 			UiManager *uiMan = UiManager::getSingletonPtr();
 			if (uiMan->isUiDirty())

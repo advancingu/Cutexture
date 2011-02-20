@@ -42,21 +42,42 @@ template<> Cutexture::Game* Ogre::Singleton<Cutexture::Game>::ms_Singleton = 0;
 namespace Cutexture
 {
 	Game::Game()
+		: mInputManager(0)
 	{
 		if (OgreCore::getSingletonPtr() == NULL)
 		{
 			EXCEPTION("OgreCore is not initialized.", "Game::Game()");
 		}
-		
-connect	(InputManager::getSingletonPtr(), SIGNAL(keyPressEvent(QKeyEvent*)), this, SLOT(keyPressEvent(QKeyEvent*)));
-}
+	}
 
 Game::~Game()
 {
 }
 
-void Game::update()
+void Game::setInputManager(InputManager *aInputManager)
 {
+	if (mInputManager && aInputManager != mInputManager)
+	{
+		disconnect(mInputManager, 0, this, 0);
+	}
+	
+	if (aInputManager == 0 || !aInputManager->isInitialized())
+	{
+		EXCEPTION("InputManager not initialized.", "Game::setInputManager(InputManager *)");
+	}
+	
+	mInputManager = aInputManager;
+	
+	if (mInputManager)
+	{
+		connect(mInputManager, SIGNAL(keyPressEvent(QKeyEvent*)), this, SLOT(keyPressEvent(QKeyEvent*)));
+	}
+}
+
+void Game::applyGameLogic()
+{
+	assert(mInputManager);
+	
 	// move the camera x units per second
 	const float camMovSpeed = 50;
 	// rotate the camera x degrees per second
@@ -64,16 +85,15 @@ void Game::update()
 	// fraction of a second since last update
 	const Ogre::Real frameFraction = Core::getSingletonPtr()->getFrameUpdateRate();
 
-	InputManager *inputManager = InputManager::getSingletonPtr();
 	Ogre::Camera* mainCamera = ViewManager::getSingletonPtr()->getPrimaryViewport()->getCamera();
 
-	QPoint mouseDelta = inputManager->getRelativeMouseMovement();
+	QPoint mouseDelta = mInputManager->getRelativeMouseMovement();
 
 	Ogre::Degree relativePitch(0);
 	Ogre::Degree relativeYaw(0);
 
 	// ***** Handle Movement *****
-	Enums::Movements movementsActive = inputManager->getMovementsActive();
+	Enums::Movements movementsActive = mInputManager->getMovementsActive();
 
 	Ogre::Vector3 vecMovement(0.0f);
 
@@ -122,7 +142,7 @@ void Game::update()
 	}
 
 	// Mouse rotations                
-	if (inputManager->getMouseButtonsPressed() & Qt::RightButton)
+	if (mInputManager->getMouseButtonsPressed() & Qt::RightButton)
 	{
 		// The frame rate doesn't need to be compensated for here because this is based on the mouse delta
 		// which is constant in time so naturally variable with the frame rate.

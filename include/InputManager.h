@@ -37,7 +37,6 @@ namespace Cutexture
 	 * input (e.g. camera movement key is pressed).
 	 */
 	class InputManager: public QObject,
-			public Ogre::Singleton<InputManager>,
 			public OIS::MouseListener,
 			public OIS::KeyListener
 	{
@@ -50,7 +49,7 @@ namespace Cutexture
 		inline bool isInitialized() const { return (mOis && mOisKeyboard && mOisMouse); }
 
 		/** Updates the current input state. */
-		void update();
+		void updateInputState();
 
 		/** Call to update the input manager based on the new
 		 window size. */

@@ -28,8 +28,6 @@
 #include "Exception.h"
 #include "Constants.h"
 
-template<> Cutexture::InputManager* Ogre::Singleton<Cutexture::InputManager>::ms_Singleton = 0;
-
 namespace Cutexture
 {
 	InputManager::InputManager() :
@@ -70,6 +68,9 @@ namespace Cutexture
 	
 	void InputManager::initialize(Ogre::RenderWindow *aRenderWindow)
 	{
+		// initialize only once
+		assert(!mOis);
+		
 		// initialize the OpenInputSystem (OIS)
 		size_t windowHnd = 0;
 		aRenderWindow->getCustomAttribute("WINDOW", &windowHnd);
@@ -124,10 +125,9 @@ namespace Cutexture
 		}
 	}
 	
-	void InputManager::update()
+	void InputManager::updateInputState()
 	{
 		assert(mOis && mOisKeyboard && mOisMouse);
-		
 		
 		// set new state
 		mOisKeyboard->capture();
@@ -227,8 +227,7 @@ namespace Cutexture
 		
 		if (modKey == Qt::NoModifier || modKey == Qt::KeypadModifier)
 		{
-			QKeyEvent
-					keyEvent(QEvent::KeyRelease, releasedKey, mModifiersPressed, toQtKeyText(arg));
+			QKeyEvent keyEvent(QEvent::KeyRelease, releasedKey, mModifiersPressed, toQtKeyText(arg));
 			emit(keyReleaseEvent(&keyEvent));
 		}
 

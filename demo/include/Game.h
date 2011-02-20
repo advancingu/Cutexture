@@ -38,7 +38,9 @@ namespace Cutexture
 		Game();
 		virtual ~Game();
 
-		void update();
+		void setInputManager(InputManager *aInputManager);
+		
+		void applyGameLogic();
 
 	public slots:
 		/** Performs a shutdown of the game logic and then triggers 
@@ -47,5 +49,8 @@ namespace Cutexture
 		void initiateShutdown();
 
 		void keyPressEvent(QKeyEvent *event);
+		
+	private:
+		InputManager *mInputManager;
 	};
 }
