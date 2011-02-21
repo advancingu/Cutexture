@@ -1,0 +1,29 @@
+Cutexture is an Open Source library for integrating Qt user interfaces into Ogre3D. It is shipped with a simple example application.
+
+
+Building
+========
+
+Cutexture uses cmake as its build system.
+
+Edit the file 'build/paths.cmake' to reflect the paths on your local system.
+
+In the Cutexture directory, run one the following two commands:
+
+cmake -DCMAKE_BUILD_TYPE=”Release”
+cmake -DCMAKE_BUILD_TYPE=”Debug”
+
+This will set up a release or a debug build of the library.
+
+Now run:
+
+make install
+
+The library will be installed to 'output/lib/debug' or 'output/lib/release' depending on the build type.
+The example application will be installed to 'output/bin/debug' or 'output/bin/release' depending on the build type.
+
+
+Running the example
+===================
+
+Under Linux, to run the example after building the code as described above, you need to set the 'LD_LIBRARY_PATH' environment variable to point to the library directory that the Cutexture library was installed into.
