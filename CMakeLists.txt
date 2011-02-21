@@ -13,6 +13,9 @@ elseif(NOT CMAKE_BUILD_TYPE)
     message(FATAL_ERROR "No build type specified. Use -DCMAKE_BUILD_TYPE=\"$BUILDTYPE\" to specify.")
 endif(CMAKE_BUILD_TYPE)
 
+# Import dependency path definitions
+include(build/paths.cmake)
+
 ######################################################################
 # Configure Qt													     #
 ######################################################################
@@ -39,21 +42,18 @@ set(CUTEXTURE_INCLUDE_DIR
 if(WIN32)
 	if(MSVC)
 		set(OGRE3D_INCLUDE_DIR
-			${CMAKE_CURRENT_SOURCE_DIR}/../ogre-1.6.4-msvc/OgreMain/include
-			${CMAKE_CURRENT_SOURCE_DIR}/../ogre-1.6.4-msvc/Dependencies/include
-		)
-		set(OIS_INCLUDE_DIR
-			${CMAKE_CURRENT_SOURCE_DIR}/../OIS-1.2.0/include
+			${OGRE3D_PATH}/OgreMain/include
+			${OGRE3D_PATH}/Dependencies/include
 		)
 	endif(MSVC)
 elseif(UNIX)
     set(OGRE3D_INCLUDE_DIR
-        ${CMAKE_CURRENT_SOURCE_DIR}/../Ogre3d-sdk-1.7/include/OGRE
-	)
-	set(OIS_INCLUDE_DIR
-		${CMAKE_CURRENT_SOURCE_DIR}/../OIS-1.2.0/include
+        ${OGRE3D_PATH}/include/OGRE
 	)
 endif(WIN32)
+set(OIS_INCLUDE_DIR
+	${OIS_PATH}/include
+)
 
 include_directories(
     ${CUTEXTURE_INCLUDE_DIR}
@@ -69,26 +69,26 @@ include_directories(
 if(WIN32)
 	if(MSVC)
 		set(OGRE3D_LIB_DIR
-			${CMAKE_CURRENT_SOURCE_DIR}/../ogre-1.6.4-msvc/lib				
-			${CMAKE_CURRENT_SOURCE_DIR}/../ogre-1.6.4-msvc/Dependencies/lib/Release			
-			${CMAKE_CURRENT_SOURCE_DIR}/../ogre-1.6.4-msvc/Dependencies/lib/Debug
+			${OGRE3D_PATH}/lib				
+			${OGRE3D_PATH}/Dependencies/lib/Release			
+			${OGRE3D_PATH}/Dependencies/lib/Debug
 		)
 		set(OGRE3D_SUPPORT_LIB_DIR
 			.
 		)	
 		set(OIS_LIB_DIR
-			${CMAKE_CURRENT_SOURCE_DIR}/../OIS-1.2.0/lib
+			${OIS_PATH}/lib
 		)
 	endif(MSVC)
 elseif(UNIX)
     set(OGRE3D_LIB_DIR
-        ${CMAKE_CURRENT_SOURCE_DIR}/../Ogre3d-sdk-1.7/lib
+        ${OGRE3D_PATH}/lib
     )
     set(OGRE3D_SUPPORT_LIB_DIR
         /usr/lib64
     )
     set(OIS_LIB_DIR
-        ${CMAKE_CURRENT_SOURCE_DIR}/../OIS-1.2.0/lib
+        ${OIS_PATH}/lib
     )
 endif(WIN32)
 
@@ -148,7 +148,7 @@ elseif(CMAKE_BUILD_TYPE MATCHES "Debug")
 endif(CMAKE_BUILD_TYPE MATCHES "Release")
 
 ######################################################################
-# Configure sources												     #
+# Configure sources                                                  #
 ######################################################################
 
 #file(GLOB CUTEXTURE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
@@ -162,7 +162,7 @@ set(CUTEXTURE_MOC_HEADERS
 qt4_wrap_cpp(CUTEXTURE_MOC_SOURCES ${CUTEXTURE_MOC_HEADERS})
 
 ######################################################################
-# Configure application outputs									     #
+# Configure application outputs                                      #
 ######################################################################
 
 add_library(
@@ -172,9 +172,9 @@ add_library(
 set_target_properties(cutexture PROPERTIES VERSION 0.1.0)
 
 if(CMAKE_BUILD_TYPE MATCHES "Release")
-	set(CUTEXTURE_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/output/bin/release)
+	set(CUTEXTURE_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/output/lib/release)
 elseif(CMAKE_BUILD_TYPE MATCHES "Debug")
-	set(CUTEXTURE_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/output/bin/debug)
+	set(CUTEXTURE_INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/output/lib/debug)
 endif(CMAKE_BUILD_TYPE MATCHES "Release")
 
 install(
