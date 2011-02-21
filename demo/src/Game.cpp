@@ -168,8 +168,10 @@ void Game::initiateShutdown()
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
-	if (!event)
-	return;
+	if (!event || event->isAccepted())
+	{
+		return;
+	}
 
 	if (event->key() == Qt::Key_F2)
 	{
