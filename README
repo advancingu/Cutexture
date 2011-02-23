@@ -1,5 +1,12 @@
-Cutexture is an Open Source library for integrating Qt user interfaces into Ogre3D. It is shipped with a simple example application.
+Cutexture is an Open Source library for integrating Qt user interfaces into Ogre3D. It is shipped with a simple example application. Cutexture works by rendering Qt user interfaces into Ogre3D textures. It also provides convenience methods for forwarding mouse and keyboard events from Ogre3D to Qt.
 
+Dependencies
+============
+
+Qt 4.6 or later
+Ogre3D 1.6 or later
+Object Oriented Input System (OIS) 1.2 or later
+Cmake 2.6 or later
 
 Building
 ========
@@ -27,3 +34,13 @@ Running the example
 ===================
 
 Under Linux, to run the example after building the code as described above, you need to set the 'LD_LIBRARY_PATH' environment variable to point to the library directory that the Cutexture library was installed into.
+
+
+Using Cutexture
+===============
+
+Cutexture provides two main classes: UiManager and InputManager
+
+UiManager provides all facilities needed to render Qt user interfaces into Ogre3D textures.
+
+InputManager provides an adapter for passing OIS keyboard and mouse input events to the Qt user interface managed by UiManager. It is however possible to pass these events directly to UiManager, meaning that use of InputManager is optional.

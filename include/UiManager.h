@@ -59,15 +59,20 @@ namespace Cutexture
 		/** Recreates the texture aTexture with a power-of-two 
 		 * sized texture whose size is greater or equal to aSize.
 		 * @param aSize Minimum size of the texture aTexture.
-		 * @param aMaterial To assign aTexture to.
+		 * @param aMaterial Material to assign aTexture to.
 		 * @param aTexture The texture to resize.
 		 */
 		void resizeTexture(const QSize &aSize, const Ogre::MaterialPtr &aMaterial, 
 				const Ogre::TexturePtr &aTexture);
 		
 		/** Resizes the active UI widget to the size in 
-		 * aEvent->size().
-		 * @param aEvent Target widget size. */
+		 * aEvent->size(). Note: This is not the same as setting 
+		 * the view size. Resizing the UI changes the actual 
+		 * size of the widgets whereas changing the view size 
+		 * simply changes the size of the viewport which displays 
+		 * the UI.
+		 * @param aEvent Target widget size. 
+		 * @see setViewSize() */
 		void resizeUi(QResizeEvent *aEvent);
 		
 		/** @return True, if the size of mWidgetView is equal to the 
@@ -80,11 +85,20 @@ namespace Cutexture
 		void setViewSize(const Ogre::TexturePtr &aTexture);
 		
 	public slots:
+		/** @see QWidget::mousePressEvent() */
 		void mousePressEvent(QMouseEvent *event);
+		/** @see QWidget::mouseReleaseEvent() */
 		void mouseReleaseEvent(QMouseEvent *event);
+		/** @see QWidget::mouseMoveEvent() */
 		void mouseMoveEvent(QMouseEvent *event);
+		/** @see QWidget::keyPressEvent() */
 		void keyPressEvent(QKeyEvent *event);
+		/** @see QWidget::keyReleaseEvent() */
 		void keyReleaseEvent(QKeyEvent *event);
+		/** Sets or unsets the UI dirty flag. If the flag is set, 
+		 * the UI has changed since the last time the flag was 
+		 * set to false. This flag needs to be manually reset to 
+		 * false by the application. */
 		void setUiDirty(bool aDirty = true);
 
 	private:
